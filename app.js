@@ -2,7 +2,7 @@ var express = require("express");
 var request = require("request-promise");
 var app = express();
 app.set("view engine", "ejs");
-app.listen(3000, () => {
+app.listen(3005, () => {
     console.log("starting on 3000");
 });
 
@@ -11,6 +11,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/videoViews", (req, res) => {
+    var start = new Date();
     var id = req.query.videoID;
     var options = {
         uri: "https://www.facebook.com/watch/",
@@ -46,6 +47,12 @@ app.get("/videoViews", (req, res) => {
             topReactionsJson["edges"].forEach((reaction) => {
                 fullData["reactions"][reaction.node.reaction_type] = reaction.reaction_count;
             });
+            var end = new Date();
+            var dif = start.getTime() - end.getTime();
+
+            var Seconds_from_T1_to_T2 = dif / 1000;
+            var Seconds_Between_Dates = Math.abs(Seconds_from_T1_to_T2);
+            fullData["reqTime"] = Seconds_Between_Dates;
             res.send(fullData)
         })
         .catch((err) => {
